@@ -4,7 +4,7 @@ This repository is dedicated to solving the **Health Insurance Cross-Sell Predic
 
 ## Project Overview
 
-The goal of this project is to predict whether an existing insurance customer will buy vehicle insurance for the next year, based on various features like demographics and previous insurance details.
+The goal of this project is to predict whether an existing health insurance customer will buy a vehicle insurance for the next year, provided by the same company, based on various features like demographics and previous insurance details.
 
 This dataset provides a variety of features related to the insured person, such as:
 
@@ -20,11 +20,11 @@ I'll aim to develop a Machine Learning model that can predict the target variabl
 
 ## Dataset
 
-The dataset consists of one CSV files:
+The dataset consists of one CSV file:
 
-1. `dataset.csv`: The full dataset with features related to health insured persons.
+`dataset.csv`: The full dataset with features related to health insured persons.
 
-The target variable in the training data is `Response`, which indicates whether the customer will purchase insurance.
+The target variable in the dataset is `Response`, which indicates whether the customer will purchase insurance.
 
 | Column Name          | Description                                              |
 |----------------------|----------------------------------------------------------|
