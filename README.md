@@ -1,12 +1,10 @@
 # Health Insurance Cross-Sell Prediction
 
-This repository is dedicated to solving the **Health Insurance Cross-Sell Prediction** problem using the dataset from Kaggle. The dataset can be found [here](https://www.kaggle.com/datasets/anmolkumar/health-insurance-cross-sell-prediction). 
-
 ## Project Overview
 
-The goal of this project is to predict whether an existing health insurance customer will buy a vehicle insurance for the next year, provided by the same company, based on various features like demographics and previous insurance details.
+The goal of this project is to predict whether an existing health insurance customer will buy a vehicle insurance for the next year, provided by the same company, based on various features like demographics and previous insurance details. This repository is dedicated to solving the **Health Insurance Cross-Sell Prediction** problem using the dataset from Kaggle. The dataset can be found [here](https://www.kaggle.com/datasets/anmolkumar/health-insurance-cross-sell-prediction). 
 
-This dataset provides a variety of features related to the insured person, such as:
+The dataset provides a variety of features related to the insured person, such as:
 
 - **Age**
 - **Gender**
@@ -66,6 +64,17 @@ The target variable in the dataset is `Response`, which indicates whether the cu
 - Finalize the best-performing model and save it for potential deployment.
 - Explore model interpretability and SHAP values to understand the features driving predictions.
 
+## Requirements
+
+The code is written in Python and requires the following libraries:
+
+- Pandas
+- Requests
+- NumPy
+- Scikit-learn
+- Matplotlib
+- Seaborn
+  
 ## Installation
 
 1. Clone the repository:
@@ -73,13 +82,19 @@ The target variable in the dataset is `Response`, which indicates whether the cu
     git clone https://github.com/HugoTex98/health-insurance-cross-sell-prediction.git
     cd health-insurance-cross-sell-prediction
     ```
+    
+2. **Create a virtual environment and activate it:**
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    ```
 
-2. Install the required dependencies:
+3. Install the required dependencies:
     ```bash
     pip install -r requirements.txt
     ```
 
-3. Download the dataset from [Kaggle](https://www.kaggle.com/datasets/anmolkumar/health-insurance-cross-sell-prediction?resource=download&select=train.csv) and place it in the `/dataset` directory.
+4. Download the dataset from [Kaggle](https://www.kaggle.com/datasets/anmolkumar/health-insurance-cross-sell-prediction?resource=download&select=train.csv) and place it in `/dataset` directory.
 
 ## Usage
 
