@@ -103,8 +103,8 @@ class NumericalAnalyses:
         minn, maxx = int(floor(self.df[column].min())), int(floor(self.df[column].max()))
         
         step = (maxx - minn) // 50 + 1
-        # sns.histplot(self.df[column], bins=len(range(minn, maxx, step)))
-        sns.histplot(self.df[column], bins=len(range(minn, maxx)))
+        sns.histplot(self.df[column], bins=len(range(minn, maxx, step)))
+        # sns.histplot(self.df[column], bins=len(range(minn, maxx)))
 
 
     def round_to_nearest_order(self, number: float) -> int:
