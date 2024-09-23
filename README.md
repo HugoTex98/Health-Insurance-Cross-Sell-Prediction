@@ -98,20 +98,31 @@ The code is written in Python and requires the following libraries:
 
 ## Usage
 
-1. Run the preprocessing script to clean and prepare the data:
+1. Run the Notebook:
+
+The main file of this project is a Jupyter Notebook that contains all steps from data loading, exploratory data analysis (EDA), model training, and evaluation. To run the notebook:
+
     ```bash
-    python scripts/preprocess.py
+    jupyter notebook notebooks/Health_Insurance_Cross_Sell_Prediction.ipynb
     ```
 
-2. Train the model:
-    ```bash
-    python scripts/train_model.py
-    ```
+2. Follow Along in the Notebook:
 
-3. Evaluate the model on the test set:
-    ```bash
-    python scripts/evaluate.py
-    ```
+    Open the notebook in your browser, and run each cell sequentially. The notebook will guide you through:
+
+    - Data loading and preprocessing
+    - Exploratory Data Analysis (EDA)
+    - Feature engineering
+    - Model training and evaluation
+    - Making predictions on new data
+
+3. Modifying the Notebook:
+
+    If you wish to experiment with the model, adjust parameters, or apply different techniques, you can modify the cells in the notebook. Simply rerun the relevant sections after making changes.
+
+4. Save Results: 
+
+    Any outputs such as plots, metrics, or predictions will be generated within the notebook. If you'd like to save any specific results (e.g., predictions), follow the instructions in the relevant notebook section.
 
 ## Acknowledgements
 
