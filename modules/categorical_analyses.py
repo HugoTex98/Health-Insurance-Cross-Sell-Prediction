@@ -162,22 +162,21 @@ class CategoricalAnalyses:
         plt.show()
 
 
-    def pie(self, columns: list[str]):
+    def pie(self, col: list[str]):
         """
-        Creates pie charts for the specified list of columns.
+        Creates pie chart for the specified column.
 
         Parameters
         ----------
-        columns : list[str]
-            The list of columns for which to create pie charts.
+        col : str
+            The column to create pie charts.
         """
-        for col in columns:
-            counts = self.df[col].value_counts()
-            total_observations = counts.sum()
-            counts.plot.pie(autopct=lambda pct: '{:.2f}%\n({:.0f})'.format(pct, pct / 100 * total_observations))
-            plt.title(col)
-            plt.ylabel("")
-            plt.show()
+        counts = self.df[col].value_counts()
+        total_observations = counts.sum()
+        counts.plot.pie(autopct=lambda pct: '{:.2f}%\n({:.0f})'.format(pct, pct / 100 * total_observations))
+        plt.title(col)
+        plt.ylabel("")
+        plt.show()
 
 
     def filter_col_value(self, column: str, value='value', group_names=None, cols_wanted=None, include_ocurrences=False):
