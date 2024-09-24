@@ -1,5 +1,5 @@
 import pandas  as pd
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 
 class FeatureEngineering:
@@ -47,7 +47,8 @@ class FeatureEngineering:
 
     def minmaxscale_numeric_columns(self, cols: list):
         """
-        Normalizes numerical columns using MinMaxScaler.
+        Normalizes numerical columns using MinMaxScaler. When features do not follow a normal 
+        (Gaussian) distribution or we need to preserve the relative distance between data points.
 
         Parameters
         ----------
@@ -55,6 +56,21 @@ class FeatureEngineering:
             List of numerical columns to be normalized.
         """
         scaler = MinMaxScaler()
+        scaler.fit(self.df[cols])
+        self.df[cols] = scaler.transform(self.df[cols])
+
+
+    def standardscale_numeric_columns(self, cols: list):
+        """
+        Normalizes numerical columns using MinMaxScaler. When features do not follow a normal 
+        (Gaussian) distribution or we need to preserve the relative distance between data points.
+
+        Parameters
+        ----------
+        cols : list
+            List of numerical columns to be normalized.
+        """
+        scaler = StandardScaler()
         scaler.fit(self.df[cols])
         self.df[cols] = scaler.transform(self.df[cols])
 
@@ -130,4 +146,4 @@ class FeatureEngineering:
         col : str
             The name of the column to be one-hot encoded.
         """
-        self.df = pd.get_dummies(self.df, columns=[col])
+        self.df = pd.get_dummies(self.df, columns=[col], prefix=col, drop_first=True)
