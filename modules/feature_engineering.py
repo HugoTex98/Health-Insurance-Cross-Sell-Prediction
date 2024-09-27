@@ -1,4 +1,5 @@
-import pandas  as pd
+import pandas as pd
+import category_encoders as ce
 from sklearn.preprocessing import (MinMaxScaler, StandardScaler, 
                                    OneHotEncoder, OrdinalEncoder)
 
@@ -108,6 +109,41 @@ class FeatureEngineering:
         epsilon = 1e-8  # To avoid division by 0
         category_ratios = category_probs / (1 - category_probs + epsilon)
         self.df[feature_column] = self.df[feature_column].map(category_ratios)
+
+
+    def target_encoding(self, feature_column: str, target_column: str):
+        """
+        Encodes a categorical feature based on the mean of the target variable for that category.
+
+        Parameters
+        ----------
+        feature_columns : str
+            The categorical column to encode.
+        col : str
+            The name of the column to be frequency encoded.
+        """
+        target_encoding = self.df.groupby(feature_column)[target_column].mean()
+        self.df[feature_column] = self.df[feature_column].map(target_encoding)
+
+
+    def leave_one_out_encoding(self, feature_columns: list, target_column: str):
+        """
+        Encodes a categorical feature based on the mean of the target variable 
+        for that category, but avoids overfitting by excluding the current row 
+        when calculating the mean for each category.
+        It uses "sigma" argument to adds normal (Gaussian) distribution noise
+        to decrease overfitting. Optimal value is commonly between 0.05 and 0.6.
+
+        Parameters
+        ----------
+        feature_columns : list
+            The list of categorical columns to encode.
+        col : str
+            The name of the target column to be frequency encoded.
+        """
+        # Leave-One-Out encoding
+        encoder = ce.LeaveOneOutEncoder(cols=feature_columns, sigma=0.1) #
+        self.df = encoder.fit_transform(self.df, self.df[target_column])
             
 
     def frequency_encoding(self, col: str):
