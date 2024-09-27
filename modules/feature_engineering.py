@@ -92,22 +92,21 @@ class FeatureEngineering:
             self.df[c] = self.df[c].apply(lambda x: train_threshold if x > train_threshold else x)
             
 
-    def probability_ratio_encoding(self, feature_columns: list, target_column: str):
+    def probability_ratio_encoding(self, feature_column: str, target_column: str):
         """
-        Encodes categorical features based on the probability ratio between a feature and the target column.
+        Encodes categorical feature based on the probability ratio between a feature and the target column.
 
         Parameters
         ----------
-        feature_columns : list
-            List of categorical columns to encode.
+        feature_columns : str
+            The categorical column to encode.
         target_column : str
             The target column used to calculate probability ratios.
         """
-        for c in feature_columns:
-            category_probs = self.df.groupby(c)[target_column].mean()
-            epsilon = 1e-8  # To avoid division by 0
-            category_ratios = category_probs / (1 - category_probs + epsilon)
-            self.df[c] = self.df[c].map(category_ratios)
+        category_probs = self.df.groupby(feature_column)[target_column].mean()
+        epsilon = 1e-8  # To avoid division by 0
+        category_ratios = category_probs / (1 - category_probs + epsilon)
+        self.df[feature_column] = self.df[feature_column].map(category_ratios)
             
 
     def frequency_encoding(self, col: str):
