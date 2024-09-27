@@ -1,5 +1,6 @@
 import pandas  as pd
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.preprocessing import (MinMaxScaler, StandardScaler, 
+                                   OneHotEncoder, OrdinalEncoder)
 
 
 class FeatureEngineering:
@@ -122,6 +123,47 @@ class FeatureEngineering:
         self.df[col] = self.df[col].map(freq_encoding)
 
 
+    def one_hot_encoding(self, col: str):
+        """
+        Performs One Hot Encoding on a categorical feature.
+
+        Parameters
+        ----------
+        col : str
+            The name of the categorical column to encode.
+        """
+        encoder = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
+        encoder.fit_(self.df[[col]])
+        encoder_data = encoder.transform(self.df[[col]])
+
+        # Create a DataFrame with the encoded values
+        encoded_df = pd.DataFrame(encoder_data,
+                                  columns=encoder.get_feature_names_out([col]))
+
+        # Concatenate the encoded DataFrame with the original DataFrame
+        self.df = pd.concat([self.df, encoded_df], axis=1)
+
+        # Drop the original col column
+        self.df = self.df.drop(col, axis=1)
+
+
+    def ordinal_encoding(self, col: str):
+        """
+        Performs Ordinal Encoding on a categorical feature.
+
+        Parameters
+        ----------
+        col : str
+            The name of the categorical column to encode.
+        """
+        encoder = OrdinalEncoder(dtype=int)
+        encoder.fit_(self.df[[col]])
+        encoder_data = encoder.transform(self.df[[col]])
+
+        # Substitute "col" values for the encoded ones
+        self.df[col] = encoder_data
+
+
     def categorical_encoding(self, col: str, mapping: dict):
         """
         Encodes binary categorical features using a provided mapping dictionary.
@@ -136,7 +178,7 @@ class FeatureEngineering:
         self.df[col].replace(mapping, inplace=True)
 
 
-    def one_hot_encoding(self, col: str):
+    def dummies_encoding(self, col: str):
         """
         Performs one-hot encoding on a categorical feature with more than two possible values.
 
