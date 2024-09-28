@@ -193,7 +193,7 @@ class FeatureEngineering:
             The name of the categorical column to encode.
         """
         encoder = OrdinalEncoder(dtype=int)
-        encoder.fit_(self.df[[col]])
+        encoder.fit(self.df[[col]])
         encoder_data = encoder.transform(self.df[[col]])
 
         # Substitute "col" values for the encoded ones
