@@ -183,7 +183,7 @@ class FeatureEngineering:
         self.df = self.df.drop(col, axis=1)
 
 
-    def ordinal_encoding(self, col: str):
+    def ordinal_encoding(self, col: str, categories: list):
         """
         Performs Ordinal Encoding on a categorical feature.
 
@@ -192,7 +192,7 @@ class FeatureEngineering:
         col : str
             The name of the categorical column to encode.
         """
-        encoder = OrdinalEncoder(dtype=int)
+        encoder = OrdinalEncoder(dtype=int, categories=categories)
         encoder.fit(self.df[[col]])
         encoder_data = encoder.transform(self.df[[col]])
 
