@@ -211,7 +211,7 @@ class FeatureEngineering:
         mapping : dict
             A dictionary that maps the binary values to numerical representations.
         """
-        self.df[col].replace(mapping, inplace=True)
+        self.df[col] = self.df[col].replace(mapping)
 
 
     def dummies_encoding(self, col: str):
