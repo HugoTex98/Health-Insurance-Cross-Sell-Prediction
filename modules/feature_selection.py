@@ -47,22 +47,15 @@ class FeatureSelection:
         self.plt = PlotCharts()
         
 
-    def correlation(self, method:str, n_features:int):
+    def correlation(self, method:str):
         '''
         Plot correlation methods for the dataset
         '''
         corr_matrix = self.df.corr(method=method).round(2)
         
         # Get the correlation coefficients of each variable with the target (Response)
-        target_correlations = corr_matrix[self.target].abs().sort_values(ascending=False)
-        
-        # Select the number of n_features with the highest correlation with the target (Response)
-        top_features = target_correlations[1:n_features+1].index.tolist()
-        
-        # Print the names of the top n features
-        # print("Top", n_features, f"features with the highest correlation (Spearman) with the target ({self.target}): ")
-        # for ft in range(len(top_features)):
-        #   print(top_features[ft], ":", target_correlations[ft+1])
+        target_correlations = corr_matrix[self.target].sort_values(ascending=False)
+        print(target_correlations)
         
         self.plt.plot_corr_matrix(corr_matrix, method)
         
