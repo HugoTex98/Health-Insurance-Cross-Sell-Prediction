@@ -58,4 +58,6 @@ class FeatureSelection:
         print(target_correlations)
         
         self.plt.plot_corr_matrix(corr_matrix, method)
+
+        return corr_matrix
         
