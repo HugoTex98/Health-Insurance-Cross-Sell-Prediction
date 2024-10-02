@@ -6,6 +6,7 @@ from sklearn.feature_selection import SelectKBest, f_classif, RFE
 from sklearn.inspection import permutation_importance
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 
 class PlotCharts:
@@ -60,4 +61,16 @@ class FeatureSelection:
         self.plt.plot_corr_matrix(corr_matrix, method)
 
         return corr_matrix
+    
+
+    def calculate_variance_inflation_factor(self):
+        # X is the DataFrame with independent variables
+        X = self.df.drop(columns=self.target)
+        vif_data = pd.DataFrame()
+
+        vif_data["feature"] = X.columns
+        vif_data["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+        vif_data = vif_data.sort_values(by=["VIF"], ascending=False)
+
+        print(vif_data)
         
