@@ -70,7 +70,7 @@ class FeatureSelection:
 
         vif_data["feature"] = X.columns
         vif_data["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
-        vif_data = vif_data.sort_values(by=["VIF"], ascending=False)
+        vif_data = vif_data.sort_values(by=["VIF"], ascending=False).reset_index(drop=True)
 
         print(vif_data)
         
