@@ -6,6 +6,7 @@ from sklearn.feature_selection import SelectKBest, f_classif, RFE
 from sklearn.inspection import permutation_importance
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.decomposition import PCA
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 
@@ -74,4 +75,23 @@ class FeatureSelection:
 
         print(vif_data)
         return vif_data
+    
+
+    def pca_feature_selection(self):
+        # Initialize PCA and fit the our features data after Feature Engineering steps
+        pca = PCA(n_components=None)  # Keep all components initially
+        features_pca = pca.fit_transform(self.df.drop(columns=[self.target]))
+
+        # Calculate the cumulative explained variance
+        cumulative_variance = np.cumsum(pca.explained_variance_ratio_)
+
+        # Select the number of components that explain at least 95% of the variance
+        n_components = np.argmax(cumulative_variance >= 0.95) + 1
+        print(f"There are {n_components} components that explain at least 95%.")
+
+        # Redefinition of PCA with the selected number of components
+        pca = PCA(n_components=n_components)
+        features_pca_reduced = pca.fit_transform(self.df.drop(columns=[self.target]))
+
+        return features_pca_reduced
         
