@@ -73,4 +73,5 @@ class FeatureSelection:
         vif_data = vif_data.sort_values(by=["VIF"], ascending=False).reset_index(drop=True)
 
         print(vif_data)
+        return vif_data
         
