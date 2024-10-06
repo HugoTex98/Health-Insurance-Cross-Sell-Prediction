@@ -2,10 +2,6 @@ import numpy as np
 import pandas  as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.feature_selection import SelectKBest, f_classif, RFE
-from sklearn.inspection import permutation_importance
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.decomposition import PCA
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
