@@ -223,6 +223,7 @@ class FeatureEngineering:
             Dictionary that maps the categorical values to numerical values.
         """
         self.df[col] = self.df[col].replace(mapping)
+        self.df[col] = self.df[col].astype(int)
         
 
     def dummies_encoding(self, col: str):
