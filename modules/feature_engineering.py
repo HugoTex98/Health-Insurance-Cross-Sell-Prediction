@@ -209,6 +209,7 @@ class FeatureEngineering:
         encoder = OrdinalEncoder(categories=[categories])
         encoder.fit(self.df[[col]])
         self.df[col] = encoder.transform(self.df[[col]])
+        self.df[col] = self.df[col].astype(int)
 
 
     def categorical_encoding(self, col: str, mapping: dict):
