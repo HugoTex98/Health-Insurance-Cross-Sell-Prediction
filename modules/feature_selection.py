@@ -3,7 +3,9 @@ import pandas  as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.decomposition import PCA
+from sklearn.feature_selection import RFE
 from statsmodels.stats.outliers_influence import variance_inflation_factor
+from probatus.feature_elimination import ShapRFECV
 
 
 class PlotCharts:
@@ -71,6 +73,48 @@ class FeatureSelection:
 
         print(vif_data)
         return vif_data
+    
+
+    def recursive_feature_elimination(self, model, keep_features: int, step=int):
+        # Define RFE selector with n features
+        selector = RFE(model, n_features_to_select=keep_features, step=step)
+
+        # Fit RFE selector
+        selector = selector.fit(self.df.drop(columns=[self.target]), 
+                                self.df[self.target])
+
+        # Get feature ranking
+        rankings = selector.ranking_
+
+        # Print results
+        for rank, feature in sorted(zip(rankings, self.df.drop(columns=[self.target]).columns)):
+            print(f"Rank {rank}: {feature}")
+
+        return 
+    
+
+    def shap_rfecv_selection(self, model, step: float, cv: int, scoring: str, 
+                             eval_metric: str, keep_features: int):
+        
+        # n_jobs=-1 means to run the process in all available cores
+        shap_elimination = ShapRFECV(model=model, step=step, cv=cv,
+                                     scoring=scoring, eval_metric=eval_metric,
+                                     n_jobs=-1) 
+        
+        # It shows the score results for each iteration of features to maintain
+        report = shap_elimination.fit_compute(self.df.drop(columns=[self.target]),
+                                              self.df[self.target],
+                                              check_additivity=False)
+        
+        print(report)
+        # Plot to compare the score defined in `ShapRFECV` (i.e: F1-Score or ROC-AUC) 
+        # in Training and Validation
+        shap_elimination.plot()
+
+        # Get final feature set with a nº of features
+        features_to_maintain = shap_elimination.get_reduced_features_set(num_features=keep_features)
+
+        return features_to_maintain
     
 
     def pca_feature_selection(self):
