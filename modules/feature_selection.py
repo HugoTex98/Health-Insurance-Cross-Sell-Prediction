@@ -76,6 +76,9 @@ class FeatureSelection:
     
 
     def recursive_feature_elimination(self, model, keep_features: int, step=int):
+        # List to stoer the features to keep
+        features_to_keep = []
+
         # Define RFE selector with n features
         selector = RFE(model, n_features_to_select=keep_features, step=step)
 
@@ -89,8 +92,10 @@ class FeatureSelection:
         # Print results
         for rank, feature in sorted(zip(rankings, self.df.drop(columns=[self.target]).columns)):
             print(f"Rank {rank}: {feature}")
+            if rank == 1:
+                features_to_keep.append(feature)
 
-        return 
+        return features_to_keep
     
 
     def shap_rfecv_selection(self, model, step: float, cv: int, scoring: str, 
