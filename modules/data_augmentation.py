@@ -1,7 +1,7 @@
 import pandas  as pd
 from collections import Counter
 from imblearn.over_sampling import (RandomOverSampler, SMOTE, ADASYN, 
-                                    BorderlineSMOTE, SVMSMOTE)
+                                    BorderlineSMOTE, SVMSMOTE, KMeansSMOTE)
 from imblearn.under_sampling import RandomUnderSampler, ClusterCentroids
 from sklearn.cluster import MiniBatchKMeans
 
@@ -56,6 +56,20 @@ class Augmentation:
         self.target = target
 
 
+    def random_undersampling(self):
+        """
+        Perform random undersampling to reduce the number of majority class samples.
+        
+        Random undersampling randomly selects a subset of the majority class to balance the class distribution.
+        """
+        undersampler = RandomUnderSampler(random_state=42)
+        self.undersamp_train_features_resampled, self.undersamp_train_target_resampled = undersampler.fit_resample(self.train_features, 
+                                                                                                                   self.train_target)
+        self.undersamp_df_train_modified = pd.concat([self.undersamp_train_features_resampled, 
+                                                      self.undersamp_train_target_resampled], 
+                                                      axis=1, join='inner')
+
+
     def random_oversampling(self):
         """
         Perform random oversampling on the minority class by duplicating random samples.
@@ -76,7 +90,7 @@ class Augmentation:
         
         SMOTE selects random samples and their nearest neighbors to create new samples by interpolating between them.
         """
-        smote = SMOTE(random_state=42)
+        smote = SMOTE(random_state=42, n_jobs=-1)
         self.smote_train_features_resampled, self.smote_train_target_resampled = smote.fit_resample(self.train_features, 
                                                                                                     self.train_target)
         self.smote_df_train_modified = pd.concat([self.smote_train_features_resampled, 
@@ -90,7 +104,7 @@ class Augmentation:
         
         Borderline SMOTE generates synthetic samples for minority instances that are close to the decision boundary.
         """
-        bordersmote = BorderlineSMOTE(random_state=42)
+        bordersmote = BorderlineSMOTE(random_state=42, n_jobs=-1)
         self.bordersmote_train_features_resampled, self.bordersmote_train_target_resampled = bordersmote.fit_resample(self.train_features, 
                                                                                                                       self.train_target)
         self.bordersmote_df_train_modified = pd.concat([self.bordersmote_train_features_resampled, 
@@ -104,12 +118,26 @@ class Augmentation:
         
         Borderline SMOTE SVM generates synthetic samples for minority instances that are away from the decision boundary.
         """
-        svm_smote = SVMSMOTE(random_state=42)
+        svm_smote = SVMSMOTE(random_state=42, n_jobs=-1)
         self.svm_smote_train_features_resampled, self.svm_smote_train_target_resampled = svm_smote.fit_resample(self.train_features,
                                                                                                                 self.train_target)
         self.svm_smote_df_train_modified = pd.concat([self.svm_smote_train_features_resampled,
                                                       self.svm_smote_train_target_resampled],
                                                       axis=1, join='inner')
+        
+
+    def kmeans_smote_augmentation(self):
+        """
+        Perform KMeans SMOTE augmentation to oversample the minority class, focusing on samples near the decision boundary.
+        
+        KMeans SMOTE generates synthetic samples for minority instances that are away from the decision boundary.
+        """
+        kmeans_smote = KMeansSMOTE(random_state=42, n_jobs=-1)
+        self.kmeans_smote_train_features_resampled, self.kmeans_smote_train_target_resampled = kmeans_smote.fit_resample(self.train_features,
+                                                                                                                         self.train_target)
+        self.kmeans_smote_df_train_modified = pd.concat([self.kmeans_smote_train_features_resampled,
+                                                         self.kmeans_smote_train_target_resampled],
+                                                         axis=1, join='inner')
 
 
     def adasyn_augmentation(self):
@@ -118,26 +146,12 @@ class Augmentation:
         
         ADASYN generates synthetic samples based on the local distribution of the minority class, focusing on regions with lower density.
         """
-        adasyn = ADASYN(random_state=42)
+        adasyn = ADASYN(random_state=42, n_jobs=-1)
         self.adasyn_train_features_resampled, self.adasyn_train_target_resampled = adasyn.fit_resample(self.train_features, 
                                                                                                        self.train_target)
         self.adasyn_df_train_modified = pd.concat([self.adasyn_train_features_resampled, 
                                                    self.adasyn_train_target_resampled], 
                                                    axis=1, join='inner')
-
-
-    def random_undersampling(self):
-        """
-        Perform random undersampling to reduce the number of majority class samples.
-        
-        Random undersampling randomly selects a subset of the majority class to balance the class distribution.
-        """
-        undersampler = RandomUnderSampler(random_state=42)
-        self.undersamp_train_features_resampled, self.undersamp_train_target_resampled = undersampler.fit_resample(self.train_features, 
-                                                                                                                   self.train_target)
-        self.undersamp_df_train_modified = pd.concat([self.undersamp_train_features_resampled, 
-                                                      self.undersamp_train_target_resampled], 
-                                                      axis=1, join='inner')
         
 
     def cluster_centroids_under_sampler(self, num_clusters: int) -> pd.DataFrame:
