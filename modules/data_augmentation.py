@@ -2,8 +2,6 @@ import pandas  as pd
 from collections import Counter
 from imblearn.over_sampling import (RandomOverSampler, SMOTE, ADASYN, 
                                     BorderlineSMOTE, SVMSMOTE, KMeansSMOTE)
-from imblearn.under_sampling import RandomUnderSampler, ClusterCentroids, NearMiss
-from sklearn.cluster import MiniBatchKMeans
 
 
 class Augmentation:
@@ -33,10 +31,6 @@ class Augmentation:
 
     adasyn_augmentation():
         Perform oversampling using the ADASYN algorithm, which generates synthetic samples based on the distribution of the minority class.
-
-    random_undersampling():
-        Perform random undersampling to randomly reduce the number of majority class samples.
-
     """
 
 
@@ -54,20 +48,6 @@ class Augmentation:
         self.train_features = train_data.drop(columns=target)
         self.train_target = train_data[[target]]
         self.target = target
-
-
-    def random_undersampling(self):
-        """
-        Perform random undersampling to reduce the number of majority class samples.
-        
-        Random undersampling randomly selects a subset of the majority class to balance the class distribution.
-        """
-        undersampler = RandomUnderSampler(random_state=42)
-        self.undersamp_train_features_resampled, self.undersamp_train_target_resampled = undersampler.fit_resample(self.train_features, 
-                                                                                                                   self.train_target)
-        self.undersamp_df_train_modified = pd.concat([self.undersamp_train_features_resampled, 
-                                                      self.undersamp_train_target_resampled], 
-                                                      axis=1, join='inner')
 
 
     def random_oversampling(self):
@@ -152,50 +132,3 @@ class Augmentation:
         self.adasyn_df_train_modified = pd.concat([self.adasyn_train_features_resampled, 
                                                    self.adasyn_train_target_resampled], 
                                                    axis=1, join='inner')
-        
-    
-    def near_miss3_undersampling(self):
-        # summarize class distribution
-        counter = Counter(self.df[self.target])
-        print(f'Class distribution before undersampling: {counter}')
-
-        # define the undersampling method
-        near_miss_undersample = NearMiss(version=3, n_neighbors_ver3=3)
-
-        # transform the dataset
-        self.near_miss_train_features, self.near_miss_train_target = near_miss_undersample.fit_resample(self.train_features,
-                                                                                                        self.train_target)
-        
-        # summarize the new class distribution
-        counter = Counter(self.near_miss_train_target)
-        print(f'\nClass distribution before undersampling: {counter}')
-
-        self.near_miss_df_train_modified = pd.concat([self.near_miss_train_features, 
-                                                      self.near_miss_train_target], 
-                                                      axis=1, join='inner')
-
-        
-
-    def cluster_centroids_undersampler(self, num_clusters: int) -> pd.DataFrame:
-        '''
-        Method that under samples the majority class by replacing a cluster of majority samples by the cluster centroid 
-        of a KMeans algorithm. 
-        This algorithm keeps N majority samples by fitting the KMeans algorithm with N cluster to the majority class 
-        and using the coordinates of the N cluster centroids as the new majority samples.
-        '''
-        # summarize class distribution
-        counter = Counter(self.df[self.target])
-        print(f'Class distribution before undersampling: {counter}')
-
-        # Apply Cluster Centroids undersampling
-        cc = ClusterCentroids(random_state=42)
-        self.cc_train_features, self.cc_train_target = cc.fit_resample(self.train_features,
-                                                                       self.train_target)
-        
-        # summarize the new class distribution
-        counter = Counter(self.cc_train_target)
-        print(f'\nClass distribution before undersampling: {counter}')
-
-        self.cc_df_train_modified = pd.concat([self.cc_train_features,
-                                               self.cc_train_target],
-                                               axis=1, join='inner')
