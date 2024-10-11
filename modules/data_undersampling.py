@@ -3,7 +3,7 @@ from collections import Counter
 from imblearn.under_sampling import RandomUnderSampler, ClusterCentroids, NearMiss
 
 
-class Augmentation:
+class Undersampling:
     """
     A class for performing various data augmentation techniques such as oversampling and undersampling 
     to handle class imbalance in datasets.
