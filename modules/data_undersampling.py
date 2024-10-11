@@ -57,7 +57,7 @@ class Undersampling:
     
     def near_miss3_undersampling(self):
         # summarize class distribution
-        counter = Counter(self.df[self.target])
+        counter = Counter(self.train_target)
         print(f'Class distribution before undersampling: {counter}')
 
         # define the undersampling method
