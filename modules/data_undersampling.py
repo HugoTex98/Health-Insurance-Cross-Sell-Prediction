@@ -55,13 +55,13 @@ class Undersampling:
                                                       axis=1, join='inner')
         
     
-    def near_miss3_undersampling(self):
+    def near_miss_undersampling(self, version: int=3):
         # summarize class distribution
         counter = Counter(self.train_target)
         print(f'Class distribution before undersampling: {counter}')
 
         # define the undersampling method
-        near_miss_undersample = NearMiss(version=3, n_neighbors_ver3=3)
+        near_miss_undersample = NearMiss(version=version, n_neighbors_ver3=3)
 
         # transform the dataset
         self.near_miss_train_features, self.near_miss_train_target = near_miss_undersample.fit_resample(self.train_features,
