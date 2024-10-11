@@ -6,6 +6,7 @@ from sklearn.decomposition import PCA
 from sklearn.feature_selection import RFE
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 from probatus.feature_elimination import ShapRFECV
+from BorutaShap import BorutaShap
 
 
 class PlotCharts:
@@ -76,6 +77,12 @@ class FeatureSelection:
     
 
     def recursive_feature_elimination(self, model, keep_features: int, step=int):
+        '''
+        This technique recursively removes the least important features based on model 
+        performance. After training the model on all features, it removes the least 
+        important one and repeats the process until the desired number of features is 
+        reached.
+        '''
         # List to stoer the features to keep
         features_to_keep = []
 
@@ -120,6 +127,44 @@ class FeatureSelection:
         features_to_maintain = shap_elimination.get_reduced_features_set(num_features=keep_features)
 
         return features_to_maintain
+    
+
+    def borutaSHAP_selection(self, model, n_trials: int, sample: bool, normalize: bool):
+        
+        # Creates a BorutaShap selector for classification
+        selector = BorutaShap(importance_measure = 'shap', classification = True)
+
+        # Fits the selector
+        selector.fit(X = self.df.drop(columns=[self.target]), 
+                    y = self.df[self.target], n_trials = n_trials, 
+                    sample = sample, verbose = True, normalize = normalize)
+        '''
+        Sample: Boolean
+            if true then a rowise sample of the data will be used to calculate the feature importance values
+
+        sample_fraction: float
+            The sample fraction of the original data used in calculating the feature importance values only
+                used if Sample==True.
+
+        train_or_test: string
+            Decides whether the feature improtance should be calculated on out of sample data see the dicussion here.
+                https://slds-lmu.github.io/iml_methods_limitations/pfi-data.html
+
+        normalize: boolean
+                    if true the importance values will be normalized using the z-score formula
+
+        verbose: Boolean
+            a flag indicator to print out all the rejected or accepted features.
+        '''
+
+        # Returns Boxplot of features
+        selector.plot(which_features='all')
+
+        # Display features to be removed
+        features_to_remove = selector.features_to_remove
+        print(features_to_remove)
+
+        return features_to_remove
     
 
     def pca_feature_selection(self):
