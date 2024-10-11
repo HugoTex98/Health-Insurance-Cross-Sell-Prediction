@@ -1,5 +1,4 @@
-import pandas  as pd
-from collections import Counter
+import pandas as pd
 from imblearn.under_sampling import RandomUnderSampler, ClusterCentroids, NearMiss
 
 
@@ -57,7 +56,7 @@ class Undersampling:
     
     def near_miss_undersampling(self, version: int=3):
         # summarize class distribution
-        counter = Counter(self.train_target)
+        counter = self.train_target.value_counts()
         print(f'Class distribution before undersampling: {counter}')
 
         # define the undersampling method
@@ -67,13 +66,15 @@ class Undersampling:
         self.near_miss_train_features, self.near_miss_train_target = near_miss_undersample.fit_resample(self.train_features,
                                                                                                         self.train_target)
         
-        # summarize the new class distribution
-        counter = Counter(self.near_miss_train_target)
-        print(f'\nClass distribution before undersampling: {counter}')
-
         self.near_miss_df_train_modified = pd.concat([self.near_miss_train_features, 
                                                       self.near_miss_train_target], 
                                                       axis=1, join='inner')
+        
+        # summarize the new class distribution
+        counter = self.near_miss_train_target.value_counts()
+        print(f'\nClass distribution after undersampling: {counter}')
+
+        
         
 
     def cluster_centroids_undersampler(self, num_clusters: int) -> pd.DataFrame:
@@ -84,7 +85,7 @@ class Undersampling:
         and using the coordinates of the N cluster centroids as the new majority samples.
         '''
         # summarize class distribution
-        counter = Counter(self.df[self.target])
+        counter = self.train_target.value_counts()
         print(f'Class distribution before undersampling: {counter}')
 
         # Apply Cluster Centroids undersampling
@@ -92,10 +93,12 @@ class Undersampling:
         self.cc_train_features, self.cc_train_target = cc.fit_resample(self.train_features,
                                                                        self.train_target)
         
-        # summarize the new class distribution
-        counter = Counter(self.cc_train_target)
-        print(f'\nClass distribution before undersampling: {counter}')
-
         self.cc_df_train_modified = pd.concat([self.cc_train_features,
-                                               self.cc_train_target],
-                                               axis=1, join='inner')
+                                                    self.cc_train_target],
+                                                    axis=1, join='inner')
+
+        # summarize the new class distribution
+        counter = self.cc_train_target.value_counts()
+        print(f'\nClass distribution after undersampling: {counter}')
+
+        
