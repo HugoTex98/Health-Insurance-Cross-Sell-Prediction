@@ -1,6 +1,9 @@
 import pandas  as pd
-from imblearn.over_sampling import RandomOverSampler, SMOTE, ADASYN, BorderlineSMOTE
+from collections import Counter
+from imblearn.over_sampling import (RandomOverSampler, SMOTE, ADASYN, 
+                                    BorderlineSMOTE, SVMSMOTE)
 from imblearn.under_sampling import RandomUnderSampler, ClusterCentroids
+from sklearn.cluster import MiniBatchKMeans
 
 
 class Augmentation:
@@ -93,6 +96,20 @@ class Augmentation:
         self.bordersmote_df_train_modified = pd.concat([self.bordersmote_train_features_resampled, 
                                                         self.bordersmote_train_target_resampled], 
                                                         axis=1, join='inner')
+        
+
+    def svm_smote_augmentation(self):
+        """
+        Perform Borderline SMOTE SVM augmentation to oversample the minority class, focusing on samples near the decision boundary.
+        
+        Borderline SMOTE SVM generates synthetic samples for minority instances that are away from the decision boundary.
+        """
+        svm_smote = SVMSMOTE(random_state=42)
+        self.svm_smote_train_features_resampled, self.svm_smote_train_target_resampled = svm_smote.fit_resample(self.train_features,
+                                                                                                                self.train_target)
+        self.svm_smote_df_train_modified = pd.concat([self.svm_smote_train_features_resampled,
+                                                      self.svm_smote_train_target_resampled],
+                                                      axis=1, join='inner')
 
 
     def adasyn_augmentation(self):
@@ -121,3 +138,26 @@ class Augmentation:
         self.undersamp_df_train_modified = pd.concat([self.undersamp_train_features_resampled, 
                                                       self.undersamp_train_target_resampled], 
                                                       axis=1, join='inner')
+        
+
+    def cluster_centroids_under_sampler(self, num_clusters: int) -> pd.DataFrame:
+        '''
+        Method that under samples the majority class by replacing a cluster of majority samples by the cluster centroid 
+        of a KMeans algorithm. 
+        This algorithm keeps N majority samples by fitting the KMeans algorithm with N cluster to the majority class 
+        and using the coordinates of the N cluster centroids as the new majority samples.
+        '''
+        print('Original dataset shape %s' % Counter(self.train_target[self.target]))
+        
+        cc = ClusterCentroids(
+            estimator=MiniBatchKMeans(n_clusters=num_clusters, n_init='auto', random_state=42), random_state=42
+        )
+        
+        X_res, y_res = cc.fit_resample(self.train_features, self.train_target)
+        
+        print('Dataset shape after Undersampling %s' % Counter(self.train_target[self.target]))
+        
+        df_train_undersampled = X_res
+        df_train_undersampled[y_res.columns[0]] = y_res
+        
+        return df_train_undersampled
