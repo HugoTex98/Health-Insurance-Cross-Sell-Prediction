@@ -2,7 +2,7 @@ import pandas  as pd
 from collections import Counter
 from imblearn.over_sampling import (RandomOverSampler, SMOTE, ADASYN, 
                                     BorderlineSMOTE, SVMSMOTE, KMeansSMOTE)
-from imblearn.under_sampling import RandomUnderSampler, ClusterCentroids
+from imblearn.under_sampling import RandomUnderSampler, ClusterCentroids, NearMiss
 from sklearn.cluster import MiniBatchKMeans
 
 
@@ -153,25 +153,49 @@ class Augmentation:
                                                    self.adasyn_train_target_resampled], 
                                                    axis=1, join='inner')
         
+    
+    def near_miss3_undersampling(self):
+        # summarize class distribution
+        counter = Counter(self.df[self.target])
+        print(f'Class distribution before undersampling: {counter}')
 
-    def cluster_centroids_under_sampler(self, num_clusters: int) -> pd.DataFrame:
+        # define the undersampling method
+        near_miss_undersample = NearMiss(version=3, n_neighbors_ver3=3)
+
+        # transform the dataset
+        self.near_miss_train_features, self.near_miss_train_target = near_miss_undersample.fit_resample(self.train_features,
+                                                                                                        self.train_target)
+        
+        # summarize the new class distribution
+        counter = Counter(self.near_miss_train_target)
+        print(f'\nClass distribution before undersampling: {counter}')
+
+        self.near_miss_df_train_modified = pd.concat([self.near_miss_train_features, 
+                                                      self.near_miss_train_target], 
+                                                      axis=1, join='inner')
+
+        
+
+    def cluster_centroids_undersampler(self, num_clusters: int) -> pd.DataFrame:
         '''
         Method that under samples the majority class by replacing a cluster of majority samples by the cluster centroid 
         of a KMeans algorithm. 
         This algorithm keeps N majority samples by fitting the KMeans algorithm with N cluster to the majority class 
         and using the coordinates of the N cluster centroids as the new majority samples.
         '''
-        print('Original dataset shape %s' % Counter(self.train_target[self.target]))
+        # summarize class distribution
+        counter = Counter(self.df[self.target])
+        print(f'Class distribution before undersampling: {counter}')
+
+        # Apply Cluster Centroids undersampling
+        cc = ClusterCentroids(random_state=42)
+        self.cc_train_features, self.cc_train_target = cc.fit_resample(self.train_features,
+                                                                       self.train_target)
         
-        cc = ClusterCentroids(
-            estimator=MiniBatchKMeans(n_clusters=num_clusters, n_init='auto', random_state=42), random_state=42
-        )
-        
-        X_res, y_res = cc.fit_resample(self.train_features, self.train_target)
-        
-        print('Dataset shape after Undersampling %s' % Counter(self.train_target[self.target]))
-        
-        df_train_undersampled = X_res
-        df_train_undersampled[y_res.columns[0]] = y_res
-        
-        return df_train_undersampled
+        # summarize the new class distribution
+        counter = Counter(self.cc_train_target)
+        print(f'\nClass distribution before undersampling: {counter}')
+
+        self.cc_df_train_modified = pd.concat([self.cc_train_features,
+                                               self.cc_train_target],
+                                               axis=1, join='inner')
